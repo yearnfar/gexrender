@@ -1,0 +1,36 @@
+{
+  "template": {
+    "src": "file:///C:\\Users\\Administrator\\Workspace\\go\\src\\github.com\\yearnfar\\gexrender\\pkg\\gexrender\\testdata\\gexrender.aep",
+    "composition": "gexrender"
+  },
+  "assets": [
+   {
+      "type": "image",
+      "layer_name": "golang",
+      "src": "file:///C:\\Users\\Administrator\\Workspace\\go\\src\\github.com\\yearnfar\\gexrender\\pkg\\gexrender\\testdata\\timg.png"
+    },{
+      "type": "data",
+      "layer_name": "greet",
+      "property": "sourceText",
+      "value": "Hello Golang!"
+    }
+  ],
+  "actions":{
+    "postrender": [
+      {
+        "action": "@gexrender/action-encode",
+        "parameter": {
+          "preset": "mp4",
+          "input": "result.avi",
+          "output": "result.mp4"
+        }
+      }, {
+        "action": "@gexrender/action-copy",
+        "parameter": {
+          "input": "result.mp4",
+          "output": "../result.mp4"
+        }
+      }
+    ]
+  }
+}
