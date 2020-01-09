@@ -13,6 +13,11 @@
       "layer_name": "greet",
       "property": "sourceText",
       "value": "Hello Golang!"
+    },{
+      "type": "data",
+      "layer_name": "bgm",
+      "property": "audioLevels",
+      "expression": "[-10.1, -10.2]"
     }
   ],
   "actions":{
