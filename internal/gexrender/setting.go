@@ -25,6 +25,7 @@ type Setting struct {
 	SkipCleanup           bool   // 不清理缓存目录
 	ForceCommandLinePatch bool   // 补丁
 	Debug                 bool   // 调试模式
+	LogFile               string // 日志输出文件
 	MultiFrames           bool
 	Reuse                 bool
 	StopOnError           bool

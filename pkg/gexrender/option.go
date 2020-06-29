@@ -14,6 +14,13 @@ func WithDebug() Option {
 	}
 }
 
+// WithLogFile 日志输出到文件
+func WithLogFile(file string) Option {
+	return func(s *gexrender.Setting) {
+		s.LogFile = file
+	}
+}
+
 // WithConfigFile 提供一个包含作业的json文件的相对或绝对路径代替从参数中使用json。
 func WithConfigFile(filename string) Option {
 	return func(s *gexrender.Setting) {

@@ -3,6 +3,7 @@ package gexrender
 import (
 	"errors"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/go-playground/locales/zh"
@@ -32,6 +33,16 @@ func init() {
 func Render(setting *Setting) (err error) {
 	if setting.Debug {
 		log.SetLevel(log.DebugLevel)
+	}
+
+	if setting.LogFile != "" {
+		logFile, err := os.OpenFile(setting.LogFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
+		if err != nil {
+			log.Error(err)
+			return err
+		}
+
+		log.SetOutput(logFile)
 	}
 
 	if setting.WorkPath == "" {
