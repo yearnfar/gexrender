@@ -86,7 +86,7 @@ func WithReuse() Option {
 	}
 }
 
-// WithReuse 如果发生处理/呈现错误，则强制aerender停止，否则aerender将报告错误并继续工作。
+// WithStopOnError 如果发生处理/呈现错误，则强制aerender停止，否则aerender将报告错误并继续工作。
 func WithStopOnError() Option {
 	return func(s *gexrender.Setting) {
 		s.StopOnError = true
@@ -102,7 +102,7 @@ func WithMaxMemoryPercent(percent int) Option {
 	}
 }
 
-// WithReuWithImageCachePercent （来自Adobe官网）：指定用于缓存已渲染图片和镜头的最大内存百分比。
+// WithImageCachePercent （来自Adobe官网）：指定用于缓存已渲染图片和镜头的最大内存百分比。
 func WithImageCachePercent(percent int) Option {
 	return func(s *gexrender.Setting) {
 		s.ImageCachePercent = percent

@@ -198,9 +198,9 @@ func (s *Setting) patch() (err error) {
 
 				if runtime.GOOS == "windows" {
 					log.Info("reading/writing inside Program Files folder on windows is blocked")
-					log.Info("please run nexrender with Administrator Privilidges only ONE TIME, to install the patch\n\n")
+					log.Info("please run gexrender with Administrator Privilidges only ONE TIME, to install the patch\n\n")
 				} else {
-					log.Info("you might need to try to run nexrender with \"sudo\" only ONE TIME to install the patch\n\n")
+					log.Info("you might need to try to run gexrender with \"sudo\" only ONE TIME to install the patch\n\n")
 				}
 			}
 		}()
