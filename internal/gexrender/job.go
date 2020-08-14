@@ -3,12 +3,14 @@ package gexrender
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -32,6 +34,10 @@ type Job struct {
 	Actions  map[string][]*Action `json:"actions" validate:"-"`         // Action
 
 }
+
+var renderTimeRegex = regexp.MustCompile(`PROGRESS:  Total Time Elapsed: (\d+) Seconds`)
+var renderErrorRegex = regexp.MustCompile(`Error: gexrender:(.*)`)
+var aeErrorRegex = regexp.MustCompile(`aerender ERROR:(.*)`)
 
 // CreateJob 创建任务
 func CreateJob(setting *Setting) (job *Job, err error) {
@@ -215,13 +221,6 @@ func (j *Job) Render() (err error) {
 	cmd.Stdout = &stdout
 	err = cmd.Run()
 
-	if err != nil && j.Setting.StopOnError {
-		log.Errorf("[%s]Error starting aerender process:: %v", j.Uid, err)
-		return
-	}
-
-	log.Infof(`[%s] rendering took ~%.1f sec.`, j.Uid, time.Since(startTime).Seconds())
-
 	var output []string
 	if stdout.Len() > 0 {
 		output = append(output, stdout.String())
@@ -233,7 +232,40 @@ func (j *Job) Render() (err error) {
 	outputStr := strings.Join(output, "")
 	logPath := filepath.Join(j.WorkPath, fmt.Sprintf(`../aerender-%s.log`, j.Uid))
 	_ = ioutil.WriteFile(logPath, []byte(outputStr), 0644)
-	return
+
+	if err != nil {
+		log.Errorf("[%s]Error starting aerender process:: %v", j.Uid, err)
+	}
+
+	if err != nil && j.Setting.StopOnError {
+		log.Errorf("[%s]stop on error!", j.Uid)
+		return
+	}
+
+	// 渲染成功
+	if strings.Contains(outputStr, "Finished composition") {
+		timeMatches := renderTimeRegex.FindStringSubmatch(outputStr)
+		if len(timeMatches) == 2 {
+			log.Infof(`[%s] rendering took ~%d sec.`, j.Uid, timeMatches[1])
+		} else {
+			log.Infof(`[%s] rendering took ~%.0f sec.`, j.Uid, time.Since(startTime).Seconds())
+		}
+		return
+	} else {
+		log.Infof(`[%s] rendering took ~%.0f sec.`, j.Uid, time.Since(startTime).Seconds())
+
+		errMatches := renderErrorRegex.FindStringSubmatch(outputStr)
+		if len(errMatches) > 0 {
+			return errors.New(strings.TrimSpace(errMatches[1]))
+		}
+
+		aeErrMatches := aeErrorRegex.FindStringSubmatch(outputStr)
+		if len(aeErrMatches) > 0 {
+			return errors.New(strings.TrimSpace(aeErrMatches[1]))
+		}
+
+		return errors.New("渲染失败")
+	}
 }
 
 func (j *Job) Parse(s string) {
