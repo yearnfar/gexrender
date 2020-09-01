@@ -246,7 +246,7 @@ func (j *Job) Render() (err error) {
 	if strings.Contains(outputStr, "Finished composition") {
 		timeMatches := renderTimeRegex.FindStringSubmatch(outputStr)
 		if len(timeMatches) == 2 {
-			log.Infof(`[%s] rendering took ~%d sec.`, j.Uid, timeMatches[1])
+			log.Infof(`[%s] rendering took ~%s sec.`, j.Uid, timeMatches[1])
 		} else {
 			log.Infof(`[%s] rendering took ~%.0f sec.`, j.Uid, time.Since(startTime).Seconds())
 		}
