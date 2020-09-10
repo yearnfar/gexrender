@@ -18,6 +18,7 @@ import (
 	gonanoid "github.com/matoous/go-nanoid"
 	log "github.com/sirupsen/logrus"
 	"github.com/yearnfar/gexrender/internal/gexrender/assets"
+	"github.com/yearnfar/gexrender/internal/pkg/util"
 )
 
 // Job 任务
@@ -243,7 +244,7 @@ func (j *Job) Render() (err error) {
 	}
 
 	// 渲染成功
-	if strings.Contains(outputStr, "Finished composition") {
+	if strings.Contains(outputStr, "Finished composition") || util.IsFile(j.Output) {
 		timeMatches := renderTimeRegex.FindStringSubmatch(outputStr)
 		if len(timeMatches) == 2 {
 			log.Infof(`[%s] rendering took ~%s sec.`, j.Uid, timeMatches[1])
